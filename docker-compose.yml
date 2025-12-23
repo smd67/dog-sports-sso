@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: dog_sports_sso
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_USER: mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+    secrets:
+      - mysql_root_password
+      - mysql_user_password
+
+  dog-sports-sso-backend: # Name of the backend service
+    build: backend
+    environment:
+      MYSQL_DATABASE: dog_sports_sso
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_USER: mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
+      JWT_SECRET_KEY: /run/secrets/jwt_secret_key
+    ports:
+      - "8001:8000"
+    secrets:
+      - mysql_root_password
+      - mysql_user_password
+      - jwt_secret_key
+
+  dog-sports-sso-frontend: # Name of the frontend service
+    build: frontend/dog-sports-sso
+    ports: 
+      - "10001:80"
+
+volumes:
+  db_data:
+
+secrets:
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  mysql_user_password:
+    file: ./secrets/mysql_user_password.txt
+  jwt_secret_key:
+    file: ./secrets/jwt_secret_key.txt
