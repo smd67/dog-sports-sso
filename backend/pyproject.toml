@@ -6,7 +6,7 @@ authors = [
     {name = "smd67",email = "dimigstephenm@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.9,<4.0"
 dependencies = [
     "playwright (>=1.56.0,<2.0.0)",
     "pandas (>=2.3.3,<3.0.0)",
@@ -17,6 +17,7 @@ dependencies = [
     "python-jose (>=3.5.0,<4.0.0)",
     "bcrypt (>=5.0.0,<6.0.0)",
     "python-multipart (>=0.0.20,<0.0.21)",
+    "bonobo (>=0.6.4,<0.7.0)",
 ]
 
 

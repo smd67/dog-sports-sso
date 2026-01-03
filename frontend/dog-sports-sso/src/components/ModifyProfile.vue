@@ -1,8 +1,12 @@
 <template>
   <h2>Change Password</h2>
   <form @submit.prevent="updateVenueUserInfo">
-      <input type="text" v-model="username" :readonly="true" placeholder="Username" class="form-object" />
-      <input type="text" v-model="venue" :readonly="true" placeholder="Venue" class="form-object" />
+      <input type="text" v-model="username" :readonly="true" placeholder="Username" class="form-object" />      
+      <select v-model="venue" @change="handleChange">
+        <option v-for="item in venues" :key="item" :value="item">
+          {{ item }}
+        </option>
+      </select>
       <input type="text" v-model="venueUsername" placeholder="Venue Username" class="form-object" />
       <input type="password" v-model="venuePassword" placeholder="Venue Password" class="form-object"/>
       <button type="submit">Submit</button>
@@ -26,9 +30,11 @@
       },
   });
   const username = ref(null);
+  const venues = ref([]);
   const venue = ref(null);
   const venueUsername = ref(null);
   const venuePassword = ref(null);
+  const userVenues = ref([]);
   const error = ref(null);
   const loading = ref(true);
   const router = useRouter();
@@ -36,12 +42,11 @@
   onMounted(async () => {
     console.log('IN onMounted username=' + username.value + '; user_id=' + props.user_id);
     username.value = props.user_id;
-    venue.value = 'CPE';
-    fetchVenueUserInfo();
+    fetchUserVenues();
   });
 
-  const fetchVenueUserInfo = async () => {
-    const apiUrl = 'http://127.0.0.1:8001/get-venue-user-info/';
+  const fetchUserVenues = async () => {
+    const apiUrl = 'http://127.0.0.1:8001/get-user-venues/';
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -55,12 +60,15 @@
 
     const requestBody = {
         user_id: username.value,
-        venue: venue.value
     }
     try {
         const response = await axios.post(apiUrl, requestBody, config);
-        venueUsername.value = response.data.venue_user_id;
-        venuePassword.value = response.data.venue_password;
+        userVenues.value = response.data;
+        venue.value = userVenues.value[0].venue;
+        venueUsername.value = userVenues.value[0].venue_user_id;
+        venuePassword.value = userVenues.value[0].venue_password;
+        venues.value = userVenues.value.map(row => row.venue);
+        console.log("venue=" + venue.value)
         loading.value = false;
     } catch (e) {
         loading.value = false;
@@ -69,16 +77,26 @@
     }
   };
 
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    console.log('Venue changed to:', newValue + "; event=" + JSON.stringify(event.target));
+    const result = userVenues.value.find(item => item.venue == newValue)
+    // Perform your desired callback logic here
+    venue.value = newValue;
+    venuePassword.value = result.venue_password;
+    venueUsername.value = result.venue_user_id;
+  }
+
   const updateVenueUserInfo = async () => {
     const apiUrl = 'http://127.0.0.1:8001/update-venue-user-info/';
     const token = localStorage.getItem('access_token');
-    console.log("token=" + token);
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     };
+    
     const requestBody = {
         user_id: username.value,
         venue: venue.value,

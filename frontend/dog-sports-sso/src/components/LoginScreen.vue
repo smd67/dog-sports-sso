@@ -1,7 +1,11 @@
 <template>
   <div>
-    <img alt="Dog Sports SSO logo" src="../assets/dog-sports-sso-logo.png">
-    <p style="color: limegreen; font-family: 'Kranky';font-size: 32px;"><b>Dog Sports SSO</b></p>
+    <div>
+      <CurveText :width="300" :height="80" :r="50" style="padding-right: 50px; color: limegreen; font-family: 'Kranky';font-size: 32px;">
+        Dog Sports SSO
+      </CurveText>
+    </div>
+    <img style="padding-left: 80px;" alt="Dog Sports SSO logo" src="../assets/dog-sports-sso-logo.png">
     <form @submit.prevent="login">
         <input type="text" v-model="username" placeholder="Username" class="form-object" />
         <input type="password" v-model="password" placeholder="Password" class="form-object"/>
@@ -13,16 +17,21 @@
   </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 import '@fontsource/kranky';
+import { CurveText } from '@inotom/vue-curve-text';
 
 export default {
+  components: {
+    CurveText
+  },
   data() {
     return {
       username: '',
       password: '',
-      error: null
+      error: null,
     };
   },
   methods: {
@@ -48,6 +57,9 @@ export default {
 </script>
 
 <style scoped>
+  :global(body) {
+    background-color: #fff4e6;
+  }
   .divider {
     margin-top: 50px; /* Pushes this element and everything after it to the far right */
   }

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@inotom/vue-curve-text": "^3.0.0"
+  }
+}

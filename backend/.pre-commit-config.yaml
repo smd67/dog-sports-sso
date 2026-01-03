@@ -23,4 +23,5 @@ repos:
           - types-tabulate
           - types-requests
           - types-python-dateutil
+          - types-PyMySQL
   

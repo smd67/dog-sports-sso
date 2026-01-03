@@ -1,6 +1,7 @@
 import os
 from typing import Union
 
+
 def get_secret(key: str) -> Union[str, None]:
     """
     Glue code to integrate with docker compose secrets.

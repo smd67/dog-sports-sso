@@ -16,56 +16,68 @@
         </div>
       </div>
     </div>
-    <h1 style="color: limegreen; font-family: 'Kranky';font-size: 28px;"><b>Dog Sports SSO Dashboard</b></h1>
+    <div style="padding-right: 20px;">
+      <CurveText :width="250" :height="50" :r="25" style="color: limegreen; font-family: 'Kranky';font-size: 24px;">
+        Dog Sports SSO
+      </CurveText>
+    </div>
+    <img width="75" height="75" style="padding-left: 0px;" alt="Dog Sports SSO logo" src="../assets/dog-sports-sso-logo.png">
+    <hr />
     <div class="my-division">
-      <div class="container">
-        <img src="../assets/cpe_venue.png" alt="Description" class="inline-img" />
-      </div>
       <div class="spinner" v-if="loading"></div>
       <div v-else-if="!error">
-        <table>
-            <thead>
-            <tr>
-                <th>Handler</th>
-                <th>Member ID</th>
-                <th>Phone #</th>
-                <th>Email</th>
-                <th>Address</th>
-                <!-- Add more table headers as needed -->
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ tableData.handler }}</td>
-                <td>{{ tableData.handler_member_id }}</td>
-                <td>{{ tableData.phone }}</td>
-                <td>{{ tableData.email }}</td>
-                <td>{{ tableData.address }}</td>
-            </tr>
-            </tbody>
-        </table>
-        <p></p>
-        <table>
-            <thead>
-            <tr>
-                <th>Call Name</th>
-                <th>Dog Member ID</th>
-                <th>Breed</th>
-                <th>Jump Height</th>
-                <th>Date of Birth</th>
-                <!-- Add more table headers as needed -->
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="item in tableData.dog_info" :key="item.dog_member_id">
-                 <td>{{ item.call_name }}</td>
-                 <td>{{ item.dog_member_id }}</td>
-                 <td>{{ item.breed }}</td>
-                 <td>{{ item.jump_height }}</td>
-                 <td>{{ item.dob }}</td>
-            </tr>
-            </tbody>
-        </table>
+        <div v-for="venueData in tableData" :key="venueData.venue">
+          <div class="container">
+            <img :src="getImageUrl(venueData.icon)" alt="Description" class="inline-img" width="125" height="125" />
+          </div>
+          <div style="text-align: left;">
+            <p>{{ venueData.description }}</p>
+          </div>
+          <table>
+              <thead>
+              <tr>
+                  <th>Handler</th>
+                  <th>Member ID</th>
+                  <th>Phone #</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <!-- Add more table headers as needed -->
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                  <td>{{ venueData.handler }}</td>
+                  <td>{{ venueData.handler_member_id }}</td>
+                  <td>{{ venueData.phone }}</td>
+                  <td>{{ venueData.email }}</td>
+                  <td>{{ venueData.address }}</td>
+              </tr>
+              </tbody>
+          </table>
+          <p></p>
+          <table>
+              <thead>
+              <tr>
+                  <th>Call Name</th>
+                  <th>Dog Member ID</th>
+                  <th>Breed</th>
+                  <th>Jump Height</th>
+                  <th>Date of Birth</th>
+                  <!-- Add more table headers as needed -->
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="item in venueData.dog_info" :key="item.dog_member_id">
+                  <td>{{ item.call_name }}</td>
+                  <td>{{ item.dog_member_id }}</td>
+                  <td>{{ item.breed }}</td>
+                  <td>{{ item.jump_height }}</td>
+                  <td>{{ item.dob }}</td>
+              </tr>
+              </tbody>
+          </table>
+          <p></p>
+        </div>
       </div>
       <div v-else class="error-banner" style="color: red;">
           {{ error }}
@@ -78,6 +90,7 @@
     import { ref, onMounted, onUnmounted, defineProps } from 'vue';
     import { useRouter } from 'vue-router';
     import '@fontsource/kranky';
+    import { CurveText } from '@inotom/vue-curve-text';
     const router = useRouter();
     const tableData = ref(null);
     const loading = ref(true);
@@ -91,6 +104,12 @@
     });
     console.log("props user_id=" + props.user_id);
 
+    // Function to get the dynamic image URL
+    const getImageUrl = (name) => {
+      // The path must be relative to the current component file
+      const url = new URL(`../assets/${name}`, import.meta.url);
+      return url;
+    }
     const toggleMenu = () => {
         isOpen.value = !isOpen.value;
     };
@@ -128,7 +147,7 @@
     });
 
     const fetchTableData = async () => {
-        const apiUrl = 'http://127.0.0.1:8001/get-cpe-info/';
+        const apiUrl = 'http://127.0.0.1:8001/get-user-info/';
         const token = localStorage.getItem('access_token');
         console.log("token=" + token);
         const config = {
@@ -152,6 +171,9 @@
     };
   </script>
   <style scoped>
+  :global(body) {
+    background-color: #fff4e6;
+  }
   .settings-menu-right {
     margin-left: auto; /* Pushes this element and everything after it to the far right */
   }
@@ -244,4 +266,10 @@
   width: 24px; /* Set a specific width */
   height: auto; /* Maintain aspect ratio */
 }
-  </style>
+hr {
+  border: none; /* Removes default border */
+  border-top: 2px solid #ccc; /* Sets a solid top border */
+  margin: 1em 0; /* Adds vertical spacing */
+  width: 100%; /* Sets the width to 50% of its container */
+}
+</style>
